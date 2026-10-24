@@ -107,17 +107,20 @@ expenseForm.addEventListener("submit", function(event) {
     const time = timeInput.value;
 
     // ¿Estamos editando o creando?
-    if (editingExpenseId !== null) {
-        // MODO EDICIÓN: Buscamos el gasto por su ID y lo actualizamos
-        expenses.forEach(function(expense) {
-            if (expense.id === editingExpenseId) {
-                expense.description = description;
-                expense.amount = amount;
-                expense.category = category;
-                expense.date = date;
-                expense.time = time;
-            }
+        if (editingExpenseId !== null) {
+        // MODO EDICIÓN: Buscamos el gasto por su ID
+        const expenseToEdit = expenses.find(function(expense) {
+            return expense.id === editingExpenseId;
         });
+
+        // Si lo encontramos, actualizamos sus datos
+        if (expenseToEdit) {
+            expenseToEdit.description = description;
+            expenseToEdit.amount = amount;
+            expenseToEdit.category = category;
+            expenseToEdit.date = date;
+            expenseToEdit.time = time;
+        }
 
         // Reseteamos la variable para volver al modo normal
         editingExpenseId = null; 

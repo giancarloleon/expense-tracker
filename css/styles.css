@@ -84,3 +84,14 @@ section {
     background-color: #e74c3c; /* Rojo para Eliminar */
     color: white;
 }
+
+/* Responsive para celulares */
+@media (max-width: 600px) {
+    #expense-form {
+        grid-template-columns: 1fr; /* Una sola columna en celulares */
+    }
+
+    #expense-form button {
+        grid-column: span 1; /* El botón ya no necesita abarcar 2 columnas */
+    }
+}
