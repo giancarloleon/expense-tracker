@@ -27,25 +27,29 @@ async function guardarGastoAPI(gasto) {
         await cargarGastosDesdeAPI();
     } catch (error) {
         console.error("Error al guardar gasto:", error);
+        alert("No se pudo guardar el gasto. Puede que el servidor esté despertando. Intenta de nuevo en unos segundos.");
     }
 }
 
 
 async function cargarGastosDesdeAPI() {
+    const loadingMsg = document.getElementById("loading-message");
+    if (loadingMsg) loadingMsg.style.display = "block";
+
     try {
         const respuesta = await fetch(`${URL_BACKEND}/api/expenses`);
         const gastosDelBackend = await respuesta.json();
         
-        // Limpiamos el array actual y lo llenamos con los datos del backend
-        expenses.length = 0; // Esto vacía el array sin perder la referencia
+        expenses.length = 0;
         gastosDelBackend.forEach(g => expenses.push(g));
         
-        // Volvemos a dibujar la pantalla
         renderExpenses();
         calculateTotal();
         
+        if (loadingMsg) loadingMsg.style.display = "none"; // Ocultar al terminar
     } catch (error) {
         console.error("Error al cargar gastos:", error);
+        if (loadingMsg) loadingMsg.textContent = "Error al conectar con el servidor. Recarga la página.";
     }
 }
 
