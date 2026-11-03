@@ -23,7 +23,7 @@ app.use(express.json());
 
 // Permitir peticiones desde cualquier origen (útil en desarrollo con Codespaces)
 app.use(cors({
-    origin: "*",
+    origin: "https://expense-tracker-iota-azure.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"]
 }));
 
