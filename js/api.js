@@ -1,5 +1,4 @@
-// 1. Definimos la URL de nuestro Backend (Reemplázala con tu URL real del puerto 3000)
-const URL_BACKEND = "https://redesigned-fishstick-r76grrj57g9vh5jg-3000.app.github.dev";
+const URL_BACKEND = "https://expense-tracker-6xko.onrender.com";
 
 // 2. Función para obtener los gastos (GET)
 
