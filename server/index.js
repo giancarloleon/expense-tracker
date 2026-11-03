@@ -6,71 +6,82 @@ const app = express();
 
 const cors = require("cors"); // Arriba, junto a express
 // ...
+const mongoose = require("mongoose");
+require("dotenv").config(); // Carga las variables del .env
 
+// Conectar a MongoDB
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log("✅ Conectado a MongoDB"))
+    .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
 // 3. Definimos un puerto
 const PORT = 3000;
+
+const Expense = require("./Models/Expense"); // <-- Importamos el modelo
 
 // 4. Middleware para que Express entienda JSON
 app.use(express.json());
 
-app.use(cors()); // Debajo de app.use(express.json());
-
-// 5. Creamos nuestra primera ruta
-app.get("/api/saludo", function(req, res) {
-    res.json({ mensaje: "¡Hola desde el Backend con Node.js y Express!" });
-});
-
-// Simulamos una base de datos con un array
-let gastos = [];
+// Permitir peticiones desde cualquier origen (útil en desarrollo con Codespaces)
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"]
+}));
 
 // 1. GET: Obtener todos los gastos
-app.get("/api/expenses", function(req, res) {
-    res.json(gastos);
+app.get("/api/expenses", async function(req, res) {
+    try {
+        // Busca todos los documentos en la colección de MongoDB
+        const gastos = await Expense.find(); 
+        res.json(gastos);
+    } catch (error) {
+        res.status(500).json({ mensaje: "Error al obtener gastos", error });
+    }
 });
 
 // 2. POST: Crear un nuevo gasto
-app.post("/api/expenses", function(req, res) {
-    const nuevoGasto = req.body; // Aquí llegan los datos del Frontend
-    nuevoGasto.id = Date.now();  // Le generamos el ID único
-    gastos.push(nuevoGasto);
-    res.status(201).json(nuevoGasto); // 201 significa "Creado"
+app.post("/api/expenses", async function(req, res) {
+    try {
+        const nuevoGasto = new Expense(req.body); 
+        await nuevoGasto.save(); 
+        res.status(201).json(nuevoGasto);
+    } catch (error) {
+        console.error("❌ Error de Mongoose:", error.message); // <-- ESTO NOS DIRÁ QUÉ PASA
+        res.status(400).json({ mensaje: "Error al guardar el gasto", error: error.message });
+    }
 });
 
 // 3. PUT: Actualizar un gasto existente
-app.put("/api/expenses/:id", function(req, res) {
-    const idBuscado = Number(req.params.id);
-    
-    // Buscamos el gasto por su ID
-    const gastoIndex = gastos.findIndex(g => g.id === idBuscado);
-    
-    if (gastoIndex !== -1) {
-        // Si lo encuentra, actualiza los datos
-        gastos[gastoIndex] = { ...gastos[gastoIndex], ...req.body };
-        res.json(gastos[gastoIndex]);
-    } else {
-        res.status(404).json({ mensaje: "Gasto no encontrado" });
+app.put("/api/expenses/:id", async function(req, res) {
+    try {
+        // Quitamos el _id del body para que Mongo no se confunda al actualizar
+        const { _id, ...datosActualizados } = req.body;
+        
+        const gastoActualizado = await Expense.findByIdAndUpdate(req.params.id, datosActualizados, { new: true });
+        if (gastoActualizado) {
+            res.json(gastoActualizado);
+        } else {
+            res.status(404).json({ mensaje: "Gasto no encontrado" });
+        }
+    } catch (error) {
+        console.error("❌ Error al actualizar:", error.message);
+        res.status(400).json({ mensaje: "Error al actualizar", error: error.message });
     }
 });
 
 // 4. DELETE: Eliminar un gasto
-app.delete("/api/expenses/:id", function(req, res) {
-    const idBuscado = Number(req.params.id);
-    
-    // Filtramos el array para quitar el gasto con ese ID
-    const gastosFiltrados = gastos.filter(g => g.id !== idBuscado);
-    
-    if (gastosFiltrados.length !== gastos.length) {
-        gastos = gastosFiltrados;
-        res.json({ mensaje: "Gasto eliminado" });
-    } else {
-        res.status(404).json({ mensaje: "Gasto no encontrado" });
+app.delete("/api/expenses/:id", async function(req, res) {
+    try {
+        const gastoEliminado = await Expense.findByIdAndDelete(req.params.id);
+        if (gastoEliminado) {
+            res.json({ mensaje: "Gasto eliminado correctamente" });
+        } else {
+            res.status(404).json({ mensaje: "Gasto no encontrado" });
+        }
+    } catch (error) {
+        res.status(400).json({ mensaje: "Error al eliminar", error });
     }
 });
 
-// 6. Levantamos el servidor
-app.listen(PORT, function() {
+app.listen(PORT, "0.0.0.0", function() {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-
-
-

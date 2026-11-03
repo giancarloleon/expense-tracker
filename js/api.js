@@ -2,37 +2,34 @@
 const URL_BACKEND = "https://redesigned-fishstick-r76grrj57g9vh5jg-3000.app.github.dev";
 
 // 2. Función para obtener los gastos (GET)
-async function obtenerGastosAPI() {
-    try {
-        const respuesta = await fetch(`${URL_BACKEND}/api/expenses`);
-        const gastos = await respuesta.json();
-        console.log("Gastos obtenidos de la API:", gastos);
-        // Aquí luego llamaremos a una función para dibujarlos en pantalla
-    } catch (error) {
-        console.error("Error al obtener gastos:", error);
-    }
-}
+
 
 // 3. Función para guardar un gasto (POST)
 async function guardarGastoAPI(gasto) {
     try {
-        const respuesta = await fetch(`${URL_BACKEND}/api/expenses`, {
-            method: "POST",
+        // Si el gasto ya tiene _id, es una edición (PUT). Si no, es creación (POST)
+        const esEdicion = gasto._id !== undefined;
+        const url = esEdicion ? `${URL_BACKEND}/api/expenses/${gasto._id}` : `${URL_BACKEND}/api/expenses`;
+        const metodo = esEdicion ? "PUT" : "POST";
+
+        const respuesta = await fetch(url, {
+            method: metodo,
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(gasto) // Convertimos el objeto a texto JSON
+            body: JSON.stringify(gasto)
         });
+        
         const gastoGuardado = await respuesta.json();
-        console.log("Gasto guardado en la API:", gastoGuardado);
-        // Aquí luego actualizaremos la pantalla
+        console.log("Gasto guardado/actualizado en la API:", gastoGuardado);
+        
+        // Recargamos la lista desde la base de datos para reflejar los cambios
+        await cargarGastosDesdeAPI();
     } catch (error) {
         console.error("Error al guardar gasto:", error);
     }
 }
 
-// Ejecutamos la prueba al cargar la página
-obtenerGastosAPI();
 
 async function cargarGastosDesdeAPI() {
     try {
@@ -51,3 +48,17 @@ async function cargarGastosDesdeAPI() {
         console.error("Error al cargar gastos:", error);
     }
 }
+
+async function eliminarGastoAPI(id) {
+    try {
+        await fetch(`${URL_BACKEND}/api/expenses/${id}`, {
+            method: "DELETE"
+        });
+        // Recargamos la lista para que desaparezca de la pantalla
+        await cargarGastosDesdeAPI();
+    } catch (error) {
+        console.error("Error al eliminar gasto:", error);
+    }
+}
+
+cargarGastosDesdeAPI();

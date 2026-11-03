@@ -8,6 +8,25 @@ const timeInput = document.getElementById("time");
 const totalExpenses = document.getElementById("total-expenses");
 const expenseList = document.getElementById("expense-list");
 
+// Al cargar la página, ponemos la fecha y hora actuales por defecto
+function establecerFechaHoraActual() {
+    const ahora = new Date();
+    
+    // Formatear la fecha como YYYY-MM-DD (el estándar que usa el input date)
+    const year = ahora.getFullYear();
+    const month = String(ahora.getMonth() + 1).padStart(2, '0');
+    const day = String(ahora.getDate()).padStart(2, '0');
+    dateInput.value = `${year}-${month}-${day}`;
+    
+    // Formatear la hora como HH:MM
+    const hours = String(ahora.getHours()).padStart(2, '0');
+    const minutes = String(ahora.getMinutes()).padStart(2, '0');
+    timeInput.value = `${hours}:${minutes}`;
+}
+
+// Ejecutamos la función al cargar
+establecerFechaHoraActual();
+
 // 2. El array donde guardaremos los gastos
 const expenses = [];
 // Variable para saber qué gasto estamos editando (null significa que estamos creando uno nuevo)
@@ -36,35 +55,33 @@ function renderExpenses() {
         const buttonContainer = document.createElement("div");
         buttonContainer.classList.add("button-group"); 
 
-                // 3. BOTÓN EDITAR
+                     // 3. BOTÓN EDITAR
         const editButton = document.createElement("button");
         editButton.textContent = "Editar";
         editButton.addEventListener("click", function() {
-            // 1. Llenamos el formulario con los datos del gasto
+            // Llenamos el formulario
             descriptionInput.value = expense.description;
             amountInput.value = expense.amount;
             categoryInput.value = expense.category;
             dateInput.value = expense.date;
             timeInput.value = expense.time;
 
-            // 2. Guardamos el ID en nuestra variable global
-            editingExpenseId = expense.id;
+            // ¡AQUÍ ESTÁ EL CAMBIO! Guardamos el _id de Mongo, no el id
+            editingExpenseId = expense._id;
 
-            // 3. Cambiamos el texto del botón de enviar
+            // Cambiamos el texto del botón
             const submitButton = expenseForm.querySelector("button[type='submit']");
             submitButton.textContent = "Guardar cambios";
             
-            // 4. Hacemos scroll hacia arriba para que el usuario vea el formulario
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         // 4. BOTÓN ELIMINAR
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Eliminar";
-        deleteButton.addEventListener("click", function() {
-            expenses.splice(index, 1);
-            renderExpenses();
-            calculateTotal();
+        deleteButton.addEventListener("click", async function() {
+            // Llamamos a la función de la API pasándole el _id de Mongo
+            await eliminarGastoAPI(expense._id);
         });
 
         // 5. AGREGAMOS BOTONES AL CONTENEDOR
@@ -98,74 +115,29 @@ function calculateTotal() {
 expenseForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
-    // Obtenemos los valores del formulario
-    const description = descriptionInput.value;
-    const amount = Number(amountInput.value);
-    const category = categoryInput.value;
-    const date = dateInput.value;
-    const time = timeInput.value;
-
-    // ¿Estamos editando o creando?
-        if (editingExpenseId !== null) {
-        // MODO EDICIÓN: Buscamos el gasto por su ID
-        const expenseToEdit = expenses.find(function(expense) {
-            return expense.id === editingExpenseId;
-        });
-
-        // Si lo encontramos, actualizamos sus datos
-        if (expenseToEdit) {
-            expenseToEdit.description = description;
-            expenseToEdit.amount = amount;
-            expenseToEdit.category = category;
-            expenseToEdit.date = date;
-            expenseToEdit.time = time;
-        }
-
-        // Reseteamos la variable para volver al modo normal
-        editingExpenseId = null; 
-        
-        // Devolvemos el texto al botón
-        const submitButton = expenseForm.querySelector("button[type='submit']");
-        submitButton.textContent = "Agregar gasto";
-
-    } else {
-        // MODO CREACIÓN: Es un gasto nuevo
-        const expense = {
-            id: Date.now(),
-            description: description,
-            amount: amount,
-            category: category,
-            date: date,
-            time: time
-        };
-        expenses.push(expense);
-    }
-    
-        // En lugar de guardar en localStorage, guardamos en la API
     const expense = {
-        description: description,
-        amount: amount,
-        category: category,
-        date: date,
-        time: time
+        description: descriptionInput.value,
+        amount: Number(amountInput.value),
+        category: categoryInput.value,
+        date: dateInput.value,
+        time: timeInput.value
     };
 
-    // Llamamos a la función de api.js que crea el gasto en el Backend
+    // Si estamos editando, le pasamos el _id que guardamos del botón
+    if (editingExpenseId !== null) {
+        expense._id = editingExpenseId;
+    }
+
+    // Guardamos en la API
     await guardarGastoAPI(expense);
 
-    // Recargamos los datos desde la API (nuestra nueva fuente de verdad)
-    await cargarGastosDesdeAPI();
-
+    // Limpiamos el formulario y volvemos al estado normal
     expenseForm.reset();
-
-    // Actualizamos pantalla
-    renderExpenses();
-    calculateTotal();
-
-    // Limpiamos el formulario
-    expenseForm.reset();
+    editingExpenseId = null; 
+    
+    const submitButton = expenseForm.querySelector("button[type='submit']");
+    submitButton.textContent = "Agregar gasto";
+    
+    establecerFechaHoraActual();
 });
 
-// 7. Ejecutamos al cargar la página
-// En lugar de renderExpenses() y calculateTotal(), usa esto:
-cargarGastosDesdeAPI();
