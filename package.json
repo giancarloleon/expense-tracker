@@ -1,0 +1,25 @@
+{
+  "name": "expense-tracker",
+  "version": "1.0.0",
+  "description": "Una aplicación web para registrar y controlar gastos personales de forma sencilla.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "author": "Giancarlo Leon",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giancarloleon/expense-tracker.git"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/giancarloleon/expense-tracker/issues"
+  },
+  "homepage": "https://github.com/giancarloleon/expense-tracker#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.3.0"
+  }
+}

@@ -13,7 +13,7 @@ const expenses = [];
 // Variable para saber qué gasto estamos editando (null significa que estamos creando uno nuevo)
 let editingExpenseId = null;
 // 3. Recuperar datos de localStorage al cargar la página
-const storedExpenses = localStorage.getItem("expenses");
+/**********************************const storedExpenses = localStorage.getItem("expenses");
 
 if (storedExpenses !== null) {
     // Si hay datos, los convertimos de string a array
@@ -23,7 +23,7 @@ if (storedExpenses !== null) {
     parsedExpenses.forEach(function(expense) {
         expenses.push(expense);
     });
-}
+}**********************************************************************************/
 // 4. Función para mostrar los gastos en la página
 function renderExpenses() {
     expenseList.innerHTML = ""; // Limpiamos la lista
@@ -63,7 +63,6 @@ function renderExpenses() {
         deleteButton.textContent = "Eliminar";
         deleteButton.addEventListener("click", function() {
             expenses.splice(index, 1);
-            localStorage.setItem("expenses", JSON.stringify(expenses));
             renderExpenses();
             calculateTotal();
         });
@@ -96,7 +95,7 @@ function calculateTotal() {
     totalExpenses.textContent = `S/ ${total.toFixed(2)}`;
 }
 // 6. Evento para agregar un nuevo gasto
-expenseForm.addEventListener("submit", function(event) {
+expenseForm.addEventListener("submit", async function(event) {
     event.preventDefault();
 
     // Obtenemos los valores del formulario
@@ -142,8 +141,22 @@ expenseForm.addEventListener("submit", function(event) {
         expenses.push(expense);
     }
     
-    // Guardamos en localStorage (ya sea el nuevo o el editado)
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+        // En lugar de guardar en localStorage, guardamos en la API
+    const expense = {
+        description: description,
+        amount: amount,
+        category: category,
+        date: date,
+        time: time
+    };
+
+    // Llamamos a la función de api.js que crea el gasto en el Backend
+    await guardarGastoAPI(expense);
+
+    // Recargamos los datos desde la API (nuestra nueva fuente de verdad)
+    await cargarGastosDesdeAPI();
+
+    expenseForm.reset();
 
     // Actualizamos pantalla
     renderExpenses();
@@ -154,6 +167,5 @@ expenseForm.addEventListener("submit", function(event) {
 });
 
 // 7. Ejecutamos al cargar la página
-// Esto dibujará los gastos recuperados de localStorage y calculará el total
-renderExpenses();
-calculateTotal();
+// En lugar de renderExpenses() y calculateTotal(), usa esto:
+cargarGastosDesdeAPI();
