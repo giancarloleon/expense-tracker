@@ -22,8 +22,12 @@ const Expense = require("./Models/Expense"); // <-- Importamos el modelo
 app.use(express.json());
 
 // Permitir peticiones desde cualquier origen (útil en desarrollo con Codespaces)
+// Configuración de CORS para producción
 app.use(cors({
-    origin: "*", // Tu URL de Vercel
+    origin: [
+        "https://expense-tracker-iota-azure.vercel.app", // Tu URL de Producción
+        /https:\/\/expense-tracker-.*\.vercel\.app$/     // Permite URLs de Preview de Vercel
+    ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
