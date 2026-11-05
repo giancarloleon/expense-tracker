@@ -10,11 +10,13 @@ async function guardarGastoAPI(gasto) {
         const esEdicion = gasto._id !== undefined;
         const url = esEdicion ? `${URL_BACKEND}/api/expenses/${gasto._id}` : `${URL_BACKEND}/api/expenses`;
         const metodo = esEdicion ? "PUT" : "POST";
-
+        
+         const token = localStorage.getItem("token");
         const respuesta = await fetch(url, {
             method: metodo,
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` // Enviamos el pase VIP
             },
             body: JSON.stringify(gasto)
         });
@@ -36,7 +38,12 @@ async function cargarGastosDesdeAPI() {
     if (loadingMsg) loadingMsg.style.display = "block";
 
     try {
-        const respuesta = await fetch(`${URL_BACKEND}/api/expenses`);
+        const token = localStorage.getItem("token");
+        const respuesta = await fetch(`${URL_BACKEND}/api/expenses`, {
+            headers: {
+                "Authorization": `Bearer ${token}` // Enviamos el pase VIP
+            }
+        });
         const gastosDelBackend = await respuesta.json();
         
         expenses.length = 0;
