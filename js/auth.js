@@ -88,3 +88,14 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+// Lógica de Cerrar Sesión
+const logoutButton = document.getElementById("logout-button");
+if (logoutButton) {
+    logoutButton.addEventListener("click", () => {
+        // 1. Eliminamos el token del navegador
+        localStorage.removeItem("token");
+        
+        // 2. Recargamos la página para que el sistema vuelva a pedir el login
+        window.location.reload();
+    });
+}

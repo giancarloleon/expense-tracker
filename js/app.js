@@ -23,7 +23,10 @@ function establecerFechaHoraActual() {
     const minutes = String(ahora.getMinutes()).padStart(2, '0');
     timeInput.value = `${hours}:${minutes}`;
 }
-
+// Limpiamos la lista si no hay token
+if (!localStorage.getItem("token")) {
+    document.getElementById("expense-list").innerHTML = "";
+}
 // Ejecutamos la función al cargar
 establecerFechaHoraActual();
 
