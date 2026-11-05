@@ -23,8 +23,9 @@ app.use(express.json());
 
 // Permitir peticiones desde cualquier origen (útil en desarrollo con Codespaces)
 app.use(cors({
-    origin: "https://expense-tracker-iota-azure.vercel.app/",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    origin: "*", // Tu URL de Vercel
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 // 1. GET: Obtener todos los gastos
