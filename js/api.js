@@ -64,4 +64,5 @@ async function eliminarGastoAPI(id) {
     }
 }
 
+
 cargarGastosDesdeAPI();
