@@ -17,7 +17,9 @@ const mongoose = require("mongoose");
 require("dotenv").config(); // Carga las variables del .env
 
 // Conectar a MongoDB
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+    serverSelectionTimeoutMS: 5000
+})
     .then(() => console.log("✅ Conectado a MongoDB"))
     .catch((err) => console.error("❌ Error al conectar a MongoDB:", err));
 // 3. Definimos un puerto
