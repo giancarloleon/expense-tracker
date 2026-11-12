@@ -1,7 +1,5 @@
-// 1. Importamos Express (reconexión forzada)
+// 1. Importamos Express (fix final)
 const express = require("express");
-
-
 
 // 2. Creamos la aplicación de Express
 const app = express();
