@@ -2,9 +2,28 @@
 
 Una aplicación web Fullstack para registrar y controlar gastos personales. Este proyecto fue construido desde cero como parte de mi portafolio para demostrar habilidades en el desarrollo web moderno, abarcando desde la interfaz de usuario hasta el despliegue en la nube.
 
-## Demo en vivo
+##  Demo en vivo
 - **Frontend:** [https://expense-tracker-iota-azure.vercel.app](https://expense-tracker-iota-azure.vercel.app)
 - **Backend API:** [https://expense-tracker-6xko.onrender.com/api/expenses](https://expense-tracker-6xko.onrender.com/api/expenses)
+
+##  Credenciales de prueba
+Para probar la aplicación sin necesidad de registrarte, puedes usar:
+- **Email:** `prueba@test.com`
+- **Contraseña:** `123456`
+
+## Capturas de pantalla
+
+| Inicio de Sesión | 
+| :---: | 
+
+<img width="1127" height="1752" alt="login Responsive" src="https://github.com/user-attachments/assets/103a87a3-518c-41a6-8e9b-6f6e6c6ed239" />
+
+| Home | 
+| :---: | 
+
+<img width="3838" height="1788" alt="Home" src="https://github.com/user-attachments/assets/ca3433f9-a2cc-4bbd-8bb6-890fd24fd1bf" />
+<img width="720" height="1600" alt="Responsive" src="https://github.com/user-attachments/assets/ad533e72-578c-4850-a9e2-232ac74ba0cc" />
+<img width="720" height="1600" alt="Home  responsive" src="https://github.com/user-attachments/assets/9b18e5a3-b68c-4e56-a479-ab325d5526ac" />
 
 ## Características
 - **CRUD Completo:** Crear, leer, actualizar y eliminar gastos.
@@ -36,7 +55,3 @@ Una aplicación web Fullstack para registrar y controlar gastos personales. Este
   - `/Models/` - Esquemas de la base de datos (Mongoose).
   - `/index.js` - Servidor Express y rutas de la API.
 
-## Próximos pasos (Roadmap)
-- [ ] Implementar autenticación de usuarios (Login/Registro) con JWT.
-- [ ] Agregar filtros por categoría y fechas.
-- [ ] Mejorar el manejo de errores y estados de carga.
