@@ -108,9 +108,7 @@ app.delete("/api/expenses/:id", verificarToken, async function(req, res) {
     }
 });
 
-app.listen(PORT, "0.0.0.0", function() {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+
 
 // RUTA DE REGISTRO
 app.post("/api/register", async function(req, res) {
@@ -161,4 +159,8 @@ app.post("/api/login", async function(req, res) {
     } catch (error) {
         res.status(500).json({ mensaje: "Error en el servidor", error: error.message });
     }
+});
+
+app.listen(PORT, "0.0.0.0", function() {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
