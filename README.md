@@ -2,6 +2,12 @@
 
 Una aplicación web Fullstack para registrar y controlar gastos personales. Este proyecto fue construido desde cero como parte de mi portafolio para demostrar habilidades en el desarrollo web moderno, abarcando desde la interfaz de usuario hasta el despliegue en la nube.
 
+## ⚠️ Nota sobre el rendimiento
+Este proyecto está desplegado utilizando las capas gratuitas de **Render** y **Vercel**. 
+- El servidor backend en Render se "duerme" automáticamente después de 15 minutos de inactividad para ahorrar recursos.
+- **¿Qué significa esto?** Si intentas iniciar sesión o guardar un gasto y la aplicación tarda unos segundos (o muestra un mensaje de "Cargando..."), es normal. El servidor está "despertando". 
+- Por favor, ten paciencia: la primera petición puede tardar hasta **50 segundos** en responder. Las siguientes serán inmediatas.
+
 ##  Demo en vivo
 - **Frontend:** [https://expense-tracker-iota-azure.vercel.app](https://expense-tracker-iota-azure.vercel.app)
 - **Backend API:** [https://expense-tracker-6xko.onrender.com/api/expenses](https://expense-tracker-6xko.onrender.com/api/expenses)
