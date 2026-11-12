@@ -61,13 +61,25 @@ async function cargarGastosDesdeAPI() {
 
 async function eliminarGastoAPI(id) {
     try {
-        await fetch(`${URL_BACKEND}/api/expenses/${id}`, {
-            method: "DELETE"
+        const token = localStorage.getItem("token"); // Obtenemos el pase VIP
+        
+        const respuesta = await fetch(`${URL_BACKEND}/api/expenses/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}` // <-- ¡Enviamos el pase VIP!
+            }
         });
-        // Recargamos la lista para que desaparezca de la pantalla
-        await cargarGastosDesdeAPI();
+
+        if (respuesta.ok) {
+            // Recargamos la lista para que desaparezca de la pantalla
+            await cargarGastosDesdeAPI();
+        } else {
+            const errorData = await respuesta.json();
+            console.error("Error al eliminar:", errorData.mensaje);
+            alert("No se pudo eliminar el gasto. Inicia sesión de nuevo.");
+        }
     } catch (error) {
-        console.error("Error al eliminar gasto:", error);
+        console.error("Error de red al eliminar:", error);
     }
 }
 

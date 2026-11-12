@@ -95,14 +95,19 @@ app.put("/api/expenses/:id", verificarToken, async function(req, res) {
 // 4. DELETE: Eliminar un gasto
 app.delete("/api/expenses/:id", verificarToken, async function(req, res) {
     try {
-        const gastoEliminado = await Expense.findByIdAndDelete(req.params.id);
+        // Solo permitimos eliminar si el gasto pertenece al usuario logueado
+        const gastoEliminado = await Expense.findOneAndDelete({ 
+            _id: req.params.id, 
+            userId: req.userId 
+        });
+
         if (gastoEliminado) {
             res.json({ mensaje: "Gasto eliminado correctamente" });
         } else {
-            res.status(404).json({ mensaje: "Gasto no encontrado" });
+            res.status(404).json({ mensaje: "Gasto no encontrado o no tienes permiso" });
         }
     } catch (error) {
-        res.status(400).json({ mensaje: "Error al eliminar", error });
+        res.status(400).json({ mensaje: "Error al eliminar", error: error.message });
     }
 });
 
