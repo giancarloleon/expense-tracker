@@ -1,4 +1,4 @@
-// 1. Importamos Express
+// 1. Importamos Express (reconexión forzada)
 const express = require("express");
 
 
